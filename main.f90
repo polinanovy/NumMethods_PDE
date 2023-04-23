@@ -24,6 +24,7 @@ call SetIC(N, u_old)
 
 t = 0.d0
 
+! Performing first step with implicit Crank–Nicolson method:
 call FirstStep(N, u_old, u_new)
 
 call UpdateIC(N, u_old, u_new)
