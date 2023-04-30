@@ -16,8 +16,18 @@ allocate (u(0:N-1))
 end subroutine Allocation
 
 
-subroutine InitializeGrid(N, a, b, dx, dt)
+subroutine InitializeGrid(N, a, b, dx, x)
 !Subroutine for initialising a grid
+
+integer :: a, b, N, i
+real(8) :: x(0:N-1)
+real(8) :: dx
+
+dx = (b - a) / (N - 1)
+x(0) = a; x(N-1) = b
+do i = 1, N-2
+ x(i) = x(i-1) + dx
+enddo
 
 end subroutine InitializeGrid
 
