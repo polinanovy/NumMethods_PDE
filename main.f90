@@ -29,12 +29,11 @@ call FirstStep(N, u_old, u_new)
 
 call UpdateIC(N, u_old, u_new)
 
-t = t + dt
-
 do while (t <= t_stop)
 	call SetBC(N, a, b, u_old)
 	call Step(N, u_old, u_new)
 	call UpdateIC(N, u_old, u_new)
+	t = t + dt
 end do
 
 call SaveData(N, u_new)
