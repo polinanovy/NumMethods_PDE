@@ -56,7 +56,7 @@ subroutine Step(u,dt,D,dx,N,u_old)
 !Time step according to the DuFort-Frankel scheme
 real(8) :: D, dt, dx, 2c
 integer :: N
-real(8) :: u(
+real(8) :: u(0:N-1)
 2c = (2*D*dt)/dx**2
 u(1:N−2) = ((1−2c)*u_old(1:N−2) + 2c*(u(2:N-1) + u(0:N−3))) / (1+2c)
 end subroutine Step
