@@ -6,9 +6,9 @@ implicit none
 real(8) :: D
 real(8) :: a, b
 real(8) :: u_left, u_right
-integer :: N
+integer :: N, i
 
-real(8), allocatable :: u_old(:), u_new(:), x(:)
+real(8), allocatable :: u_old(:), u_new(:), x(:), res(:)
 
 real(8) :: dx, dt, t, t_stop
 
@@ -24,7 +24,15 @@ t = 0.d0
 
 ! Performing first step with implicit Crank–Nicolson method:
 call FirstStep(N, D, dx, dt, u_old, u_new)
+allocate(res(0:N-1))
+call Solution(N, x, dt, D, 10000, res)
 
+t = t + dt
+open(unit = 1, file = 'RESULT')
+do i = 0, N-1
+	write(1, *) x(i), u_new(i), res(i) 
+enddo	
+	
 !call UpdateIC(N, u_old, u_new)
 
 !do while (t <= t_stop)

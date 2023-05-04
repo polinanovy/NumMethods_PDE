@@ -1,6 +1,8 @@
 module modd
 use matrix_solver
 implicit none
+real(8) :: pi = 4 * atan(1.d0)
+
 contains
 
 subroutine InitializeParameters(D, a, b, u_left, u_right, N, t_stop)
@@ -90,11 +92,11 @@ end subroutine UpdateIC
 
 subroutine SetBC()
 !Subroutine for setting the boundary condition
-integer :: N
-real(8) :: D, u_left, u_right
-real(8) :: u(0:N-1)
-u(0) = u_left
-u(N-1) = u_right
+!integer :: N
+!real(8) :: D, u_left, u_right
+!real(8) :: u(0:N-1)
+!u(0) = u_left
+!u(N-1) = u_right
 end subroutine SetBC
 
 
@@ -116,6 +118,20 @@ do i = 0, N-1
  write(2,*) x(i), u(i)
 enddo
 end subroutine SaveData
+
+
+subroutine Solution(N, x, t, D, upper_n, res)
+integer :: upper_n, m, N, i
+real(8) :: D
+real(8) :: x(0:N-1), t, res(0:N-1)
+res = 0.d0
+do m = 1, upper_n
+	do i = 0, N-1
+		res(i) = res(i) + (-1)**(m+1) * exp(4 * D * pi**2 * m**2 * t) * sin(2 * pi * m * x(i)) / m
+	enddo
+enddo
+res = 80.d0 * res / pi + 100.d0 - 80.d0 * x	
+end subroutine
 
 
 end module

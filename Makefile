@@ -24,6 +24,9 @@ res: $(PRG)
 clean:
 	rm -f *.o *.mod $(PRG) RESULT
 	echo "Cleaned!"
+	
+plot: RESULT
+	python3 plotting.py
 
 .PHONY: clean res build plot
 .SILENT: res clean
