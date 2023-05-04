@@ -127,7 +127,7 @@ real(8) :: x(0:N-1), t, res(0:N-1)
 res = 0.d0
 do m = 1, upper_n
 	do i = 0, N-1
-		res(i) = res(i) + (-1)**(m+1) * exp(4 * D * pi**2 * m**2 * t) * sin(2 * pi * m * x(i)) / m
+		res(i) = res(i) + (-1)**(m+1) * exp(-4 * D * pi**2 * m**2 * t) * sin(2 * pi * m * x(i)) / m
 	enddo
 enddo
 res = 80.d0 * res / pi + 100.d0 - 80.d0 * x	
