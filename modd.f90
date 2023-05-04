@@ -90,7 +90,11 @@ end subroutine UpdateIC
 
 subroutine SetBC()
 !Subroutine for setting the boundary condition
-
+integer :: N
+real(8) :: D, u_left, u_right
+real(8) :: u(0:N-1)
+u(0) = u_left
+u(N-1) = u_right
 end subroutine SetBC
 
 
@@ -104,8 +108,13 @@ integer :: N
 end subroutine Step
 
 
-subroutine SaveData()
-
+subroutine SaveData(N, u, x)
+real(8) :: x(0:N-1), u(0:N-1)
+integer :: N, i
+open(unit = 2, file = 'RESULT')
+do i = 0, N-1
+ write(2,*) x(i), u(i)
+enddo
 end subroutine SaveData
 
 
