@@ -32,12 +32,12 @@ end subroutine Allocation
 
 subroutine InitializeGrid(N, a, b, x, dx, dt)
 ! Subroutine for initialising the grid
-real(8) :: a, b 
+real(8) :: a, b
 integer :: N, i
 real(8) :: x(0:N-1)
 real(8) :: dx, dt
 dx = (b - a) / (N - 1)
-dt = dx**2
+dt = dx**2 
 x(0) = a; x(N-1) = b
 do i = 1, N-2
 	x(i) = x(i-1) + dx
@@ -84,38 +84,46 @@ call tridiagonal(N, alpha_vector, beta_vector, gamma_vector, b_vector, u_new)
 end subroutine FirstStep
 
 
-subroutine UpdateIC()
+subroutine UpdateIC(x, u_old)
 !Subroutine for updating the initial condition
-
+real(8) :: u_old, x
+if (x <= 0.5) then
+	u_old = 100.d0
+else
+	u_old = 20.d0
+endif
 end subroutine UpdateIC
 
 
-subroutine SetBC()
+subroutine SetBC(N, u_left, u_right, u)
 !Subroutine for setting the boundary condition
-!integer :: N
-!real(8) :: D, u_left, u_right
-!real(8) :: u(0:N-1)
-!u(0) = u_left
-!u(N-1) = u_right
+integer :: N
+real(8) :: u_left, u_right
+real(8) :: u(0:N-1)
+u(0) = u_left
+u(N-1) = u_right
 end subroutine SetBC
 
 
-subroutine Step()
+subroutine Step(N, D, dt, dx, u_old, u)
 !Time step according to the DuFort-Frankel scheme
-real(8) :: D, dt, dx!, 2c
-integer :: N
-!real(8) :: u(
-!2c = (2*D*dt)/dx**2
-!u(1:N−2) = ((1−2c)*u_old(1:N−2) + 2c*(u(2:N-1) + u(0:N−3))) / (1+2c)
+real(8) :: D, dt, dx, c2
+integer :: N, i
+real(8) :: u(0:N-1), u_old(:)
+c2 = (2*D*dt)/dx**2
+do i = 2, N-3
+ u(i) = ((1-c2)*u_old(i) + c2*(u(i+1) + u(i-1)))/(1+c2)
+enddo
+!u(2:N−3) = ((1−c2)*u_old(2:N−3) + c2*(u(3:N-2) + u(1:N−4))) / (1+c2)
 end subroutine Step
 
 
-subroutine SaveData(N, u, x)
-real(8) :: x(0:N-1), u(0:N-1)
+subroutine SaveData(N, u, x, res)
+real(8) :: x(0:N-1), u(0:N-1), res(0:N-1)
 integer :: N, i
 open(unit = 2, file = 'RESULT')
 do i = 0, N-1
- write(2,*) x(i), u(i)
+ write(2,*) x(i), u(i), res(i)
 enddo
 end subroutine SaveData
 
