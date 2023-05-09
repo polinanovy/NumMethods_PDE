@@ -3,6 +3,7 @@
 1.d0                  # b
 100.d0              # u_left
 20.d0                # u_right
-1000                   # N
+200                   # N
 100.d0              # t_stop
+10000               # upper_n
 

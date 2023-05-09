@@ -5,9 +5,9 @@ real(8) :: pi = 4 * atan(1.d0)
 
 contains
 
-subroutine InitializeParameters(D, a, b, u_left, u_right, N, t_stop)
+subroutine InitializeParameters(D, a, b, u_left, u_right, N, t_stop, upper_n)
 ! Subroutine for setting model parameters
-integer :: N
+integer :: N, upper_n
 real(8) :: D, a, b, u_left, u_right, t_stop
 open(unit = 1, file = 'INPUT')
 read(1, *) D
@@ -17,16 +17,19 @@ read(1, *) u_left
 read(1, *) u_right
 read(1, *) N
 read(1, *) t_stop
+read(1, *) upper_n
 end subroutine InitializeParameters
 
 
-subroutine Allocation(N, u_old, u_new, x)
+subroutine Allocation(N, u_old2, u_old1, u_new, x, res)
 ! Subroutine for allocating memory to dynamic arrays
 integer :: N
-real(8), allocatable :: u_old(:), u_new(:), x(:)
-allocate(u_old(0:N-1))
+real(8), allocatable :: u_old2(:), u_old1(:), u_new(:), x(:), res(:)
+allocate(u_old2(0:N-1))
+allocate(u_old1(0:N-1))
 allocate(u_new(0:N-1))
 allocate(x(0:N-1))
+allocate(res(0:N-1))
 end subroutine Allocation
 
 
@@ -84,14 +87,12 @@ call tridiagonal(N, alpha_vector, beta_vector, gamma_vector, b_vector, u_new)
 end subroutine FirstStep
 
 
-subroutine UpdateIC(x, u_old)
+subroutine UpdateIC(N, u_old2, u_old1, u_new)
 !Subroutine for updating the initial condition
-real(8) :: u_old, x
-if (x <= 0.5) then
-	u_old = 100.d0
-else
-	u_old = 20.d0
-endif
+integer :: N
+real(8) :: u_new(0:N-1), u_old1(0:N-1), u_old2(0:N-1)
+u_old2 = u_old1
+u_old1 = u_new
 end subroutine UpdateIC
 
 
@@ -105,16 +106,15 @@ u(N-1) = u_right
 end subroutine SetBC
 
 
-subroutine Step(N, D, dt, dx, u_old, u)
+subroutine Step(N, D, dt, dx, u_old2, u_old1, u_new)
 !Time step according to the DuFort-Frankel scheme
 real(8) :: D, dt, dx, c2
 integer :: N, i
-real(8) :: u(0:N-1), u_old(:)
-c2 = (2*D*dt)/dx**2
-do i = 2, N-3
- u(i) = ((1-c2)*u_old(i) + c2*(u(i+1) + u(i-1)))/(1+c2)
+real(8) :: u_new(0:N-1), u_old1(0:N-1), u_old2(0:N-1)
+c2 = (2 * D * dt) / dx**2
+do i = 1, N-2
+	u_new(i) = ((1 - c2) * u_old2(i) + c2 * (u_old1(i+1) + u_old1(i-1))) / (1 + c2)
 enddo
-!u(2:N−3) = ((1−c2)*u_old(2:N−3) + c2*(u(3:N-2) + u(1:N−4))) / (1+c2)
 end subroutine Step
 
 
@@ -123,7 +123,7 @@ real(8) :: x(0:N-1), u(0:N-1), res(0:N-1)
 integer :: N, i
 open(unit = 2, file = 'RESULT')
 do i = 0, N-1
- write(2,*) x(i), u(i), res(i)
+	write(2,*) x(i), u(i), res(i)
 enddo
 end subroutine SaveData
 
