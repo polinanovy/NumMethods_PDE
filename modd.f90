@@ -5,10 +5,10 @@ real(8) :: pi = 4 * atan(1.d0)
 
 contains
 
-subroutine InitializeParameters(D, a, b, u_left, u_right, N, t_stop, upper_n)
+subroutine InitializeParameters(D, a, b, u_left, u_right, N, C, t_stop, upper_n)
 ! Subroutine for setting model parameters
 integer :: N, upper_n
-real(8) :: D, a, b, u_left, u_right, t_stop
+real(8) :: C, D, a, b, u_left, u_right, t_stop
 open(unit = 1, file = 'INPUT')
 read(1, *) D
 read(1, *) a
@@ -16,6 +16,7 @@ read(1, *) b
 read(1, *) u_left
 read(1, *) u_right
 read(1, *) N
+read(1, *) C
 read(1, *) t_stop
 read(1, *) upper_n
 end subroutine InitializeParameters
@@ -33,14 +34,14 @@ allocate(res(0:N-1))
 end subroutine Allocation
 
 
-subroutine InitializeGrid(N, a, b, x, dx, dt)
+subroutine InitializeGrid(N, C, D, a, b, x, dx, dt)
 ! Subroutine for initialising the grid
-real(8) :: a, b
+real(8) :: a, b, C, D
 integer :: N, i
-real(8) :: x(0:N-1)
-real(8) :: dx, dt
+real(8) :: dx, dt, x(0:N-1)
 dx = (b - a) / (N - 1)
-dt = dx**2 
+dt = C * dx**2 / D
+! dt = dx**2 corresponds to C = D
 x(0) = a; x(N-1) = b
 do i = 1, N-2
 	x(i) = x(i-1) + dx
@@ -118,12 +119,13 @@ enddo
 end subroutine Step
 
 
-subroutine SaveData(N, u, x, res)
-real(8) :: x(0:N-1), u(0:N-1), res(0:N-1)
+subroutine SaveData(N, u_new, x, res, t_stop, C)
+real(8) :: x(0:N-1), u_new(0:N-1), res(0:N-1), C, t_stop
 integer :: N, i
 open(unit = 2, file = 'RESULT')
+write(2,*) N, C, t_stop
 do i = 0, N-1
-	write(2,*) x(i), u(i), res(i)
+	write(2,*) x(i), u_new(i), res(i)
 enddo
 end subroutine SaveData
 

@@ -3,8 +3,9 @@ use modd
 
 implicit none
 
-integer :: N, i
+integer :: N
 integer :: upper_n
+real(8) :: C
 real(8) :: D
 real(8) :: a, b
 real(8) :: u_left, u_right
@@ -12,11 +13,11 @@ real(8) :: dx, dt, t, t_stop
 real(8), allocatable :: u_old2(:), u_old1(:), u_new(:), x(:), res(:), u(:)
 
 ! Read the following parameters from file 'INPUT':
-call InitializeParameters(D, a, b, u_left, u_right, N, t_stop, upper_n)
+call InitializeParameters(D, a, b, u_left, u_right, N, C, t_stop, upper_n)
 ! Allocate the following arrays using N:
 call Allocation(N, u_old2, u_old1, u_new, x, res)
 ! Get grid step sizes dx and dt, as well as the array of coordinates "x":
-call InitializeGrid(N, a, b, x, dx, dt)
+call InitializeGrid(N, C, D, a, b, x, dx, dt)
 ! Set initial condition (t = 0):
 call SetIC(N, x, u_old2)
 ! Start timer (t = 0 omitted due to performing first step separately):
@@ -38,6 +39,6 @@ end do
 ! using truncated Fourier series with upper limit "upper_n":
 call Solution(N, x, t, D, upper_n, res)
 ! Save data to file 'RESULT':
-call SaveData(N, u_new, x, res)
+call SaveData(N, u_new, x, res, t_stop, C)
 
 end
