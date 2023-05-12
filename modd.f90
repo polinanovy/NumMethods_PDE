@@ -107,12 +107,12 @@ u(N-1) = u_right
 end subroutine SetBC
 
 
-subroutine Step(N, D, dt, dx, u_old2, u_old1, u_new)
+subroutine Step(N, C, u_old2, u_old1, u_new)
 !Time step according to the DuFort-Frankel scheme
-real(8) :: D, dt, dx, c2
+real(8) :: C, c2
 integer :: N, i
 real(8) :: u_new(0:N-1), u_old1(0:N-1), u_old2(0:N-1)
-c2 = (2 * D * dt) / dx**2
+c2 = 2 * C
 do i = 1, N-2
 	u_new(i) = ((1 - c2) * u_old2(i) + c2 * (u_old1(i+1) + u_old1(i-1))) / (1 + c2)
 enddo

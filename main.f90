@@ -29,7 +29,7 @@ do while (t <= t_stop)
 	! Set boundary condition:
 	call SetBC(N, u_left, u_right, u_new)
 	! Perform one time step:
-    call Step(N, D, dt, dx, u_old2, u_old1, u_new)
+    call Step(N, C, u_old2, u_old1, u_new)
     ! Update initial conditions:
     call UpdateIC(N, u_old2, u_old1, u_new)
     ! Update timer:
