@@ -20,7 +20,7 @@ call Allocation(N, u_old2, u_old1, u_new, x, res)
 call InitializeGrid(N, C, D, a, b, x, dx, dt)
 ! Set initial condition (t = 0):
 call SetIC(N, x, u_old2)
-! Start timer (t = 0 omitted due to performing first step separately):
+! Start timer:
 t = dt
 ! Perform the first step with implicit Crank–Nicolson method (t = dt):
 call FirstStep(N, D, dx, t, u_old2, u_old1)
