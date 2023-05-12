@@ -10,7 +10,7 @@ real(8) :: D
 real(8) :: a, b
 real(8) :: u_left, u_right
 real(8) :: dx, dt, t, t_stop
-real(8), allocatable :: u_old2(:), u_old1(:), u_new(:), x(:), res(:), u(:)
+real(8), allocatable :: u_old2(:), u_old1(:), u_new(:), x(:), res(:)
 
 ! Read the following parameters from file 'INPUT':
 call InitializeParameters(D, a, b, u_left, u_right, N, C, t_stop, upper_n)
