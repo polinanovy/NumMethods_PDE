@@ -87,6 +87,14 @@ b_vector(N-1) = 20.d0
 call tridiagonal(N, alpha_vector, beta_vector, gamma_vector, b_vector, u_new)
 end subroutine FirstStep
 
+subroutine dop(N, C, u_old, u_new)
+integer :: N, i, j
+real(8) :: C
+real(8) :: x(0:N-1), u_old(0:N-1), u_new(0:N-1)
+do i = 1, N-2
+	u_new(i) = u_old(i) + C * (u_old(i-1) - 2*u_old(i) + u_old(i+1))
+enddo
+end subroutine dop
 
 subroutine UpdateIC(N, u_old2, u_old1, u_new)
 !Subroutine for updating the initial condition

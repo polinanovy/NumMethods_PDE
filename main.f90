@@ -23,7 +23,9 @@ call SetIC(N, x, u_old2)
 ! Start timer:
 t = dt
 ! Perform the first step with implicit Crank–Nicolson method (t = dt):
-call FirstStep(N, D, dx, t, u_old2, u_old1)
+!call FirstStep(N, D, dx, t, u_old2, u_old1)
+call SetBC(N, u_left, u_right, u_old1)
+call dop(N, 0.45d0, u_old2, u_old1)
 ! Main loop: realisation of the DuFort-Frankel method:
 do while (t <= t_stop)
 	! Set boundary condition:
