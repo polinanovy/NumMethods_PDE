@@ -5,7 +5,7 @@ implicit none
 
 integer :: N
 integer :: upper_n
-real(8) :: C
+real(8) :: C, C1
 real(8) :: D
 real(8) :: a, b
 real(8) :: u_left, u_right
@@ -13,7 +13,7 @@ real(8) :: dx, dt, t, t_stop
 real(8), allocatable :: u_old2(:), u_old1(:), u_new(:), x(:), res(:)
 
 ! Read the following parameters from file 'INPUT':
-call InitializeParameters(D, a, b, u_left, u_right, N, C, t_stop, upper_n)
+call InitializeParameters(D, a, b, u_left, u_right, N, C, C1, t_stop, upper_n)
 ! Allocate the following arrays using N:
 call Allocation(N, u_old2, u_old1, u_new, x, res)
 ! Get grid step sizes dx and dt, as well as the array of coordinates "x":
@@ -22,10 +22,10 @@ call InitializeGrid(N, C, D, a, b, x, dx, dt)
 call SetIC(N, x, u_old2)
 ! Start timer:
 t = dt
-! Perform the first step with implicit Crank–Nicolson method (t = dt):
-!call FirstStep(N, D, dx, t, u_old2, u_old1)
+! Set boundary condition:
 call SetBC(N, u_left, u_right, u_old1)
-call dop(N, 0.45d0, u_old2, u_old1)
+! Perform the first step with explicit method (t = dt):
+call FirstStep(N, C1, u_old2, u_old1)
 ! Main loop: realisation of the DuFort-Frankel method:
 do while (t <= t_stop)
 	! Set boundary condition:

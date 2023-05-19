@@ -4,8 +4,9 @@
 100.d0              # u_left
 20.d0                # u_right
 200                   # N
-0.1d0                # C
-100.d0              # t_stop
+0.1d0           # C for main method
+0.45d0           # C for first step
+1000.d0              # t_stop
 10000               # upper_n
 
 

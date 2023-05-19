@@ -5,10 +5,10 @@ real(8) :: pi = 4 * atan(1.d0)
 
 contains
 
-subroutine InitializeParameters(D, a, b, u_left, u_right, N, C, t_stop, upper_n)
+subroutine InitializeParameters(D, a, b, u_left, u_right, N, C, C1, t_stop, upper_n)
 ! Subroutine for setting model parameters
 integer :: N, upper_n
-real(8) :: C, D, a, b, u_left, u_right, t_stop
+real(8) :: C, C1, D, a, b, u_left, u_right, t_stop
 open(unit = 1, file = 'INPUT')
 read(1, *) D
 read(1, *) a
@@ -17,6 +17,7 @@ read(1, *) u_left
 read(1, *) u_right
 read(1, *) N
 read(1, *) C
+read(1, *) C1
 read(1, *) t_stop
 read(1, *) upper_n
 end subroutine InitializeParameters
@@ -63,38 +64,38 @@ enddo
 end subroutine SetIC
 
 
-subroutine FirstStep(N, D, dx, dt, u_old, u_new)
+!subroutine FirstStep(N, D, dx, dt, u_old, u_new)
 ! Subroutine for the first time step with implicit Crank–Nicolson method
-integer :: N, i, j
-real(8) :: D, dx, dt
-real(8) :: x(0:N-1), u_old(0:N-1), u_new(0:N-1)
-real(8) :: b_vector(0:N-1)
-real(8) :: alpha_vector(0:N-2), beta_vector(0:N-1), gamma_vector(1:N-1)
+!integer :: N, i, j
+!real(8) :: D, dx, dt
+!real(8) :: x(0:N-1), u_old(0:N-1), u_new(0:N-1)
+!real(8) :: b_vector(0:N-1)
+!real(8) :: alpha_vector(0:N-2), beta_vector(0:N-1), gamma_vector(1:N-1)
 ! We use Thomas algorithm to solve a specific tridiagonal matrix from
 ! Crank–Nicolson method.
-beta_vector(0) = 1.d0
-alpha_vector(0) = 0.d0
-b_vector(0) = 100.d0
-do i = 1, N-2
-	beta_vector(i) = - D / (dx**2) - 1 / dt ! the main diagonal
-	alpha_vector(i) = D / (2 * dx**2) ! the upper subdiagonal
-	gamma_vector(i) = D / (2 * dx**2) ! the lower subdiagonal
-	b_vector(i) = - u_old(i) / dt + (D / (2 * dx**2)) * (2 * u_old(i) - u_old(i+1) - u_old(i-1)) ! right parts
-enddo
-gamma_vector(N-1) = 0.d0
-beta_vector(N-1) = 1.d0
-b_vector(N-1) = 20.d0
-call tridiagonal(N, alpha_vector, beta_vector, gamma_vector, b_vector, u_new)
-end subroutine FirstStep
+!beta_vector(0) = 1.d0
+!alpha_vector(0) = 0.d0
+!b_vector(0) = 100.d0
+!do i = 1, N-2
+!	beta_vector(i) = - D / (dx**2) - 1 / dt ! the main diagonal
+!	alpha_vector(i) = D / (2 * dx**2) ! the upper subdiagonal
+!	gamma_vector(i) = D / (2 * dx**2) ! the lower subdiagonal
+!	b_vector(i) = - u_old(i) / dt + (D / (2 * dx**2)) * (2 * u_old(i) - u_old(i+1) - u_old(i-1)) ! right parts
+!enddo
+!gamma_vector(N-1) = 0.d0
+!beta_vector(N-1) = 1.d0
+!b_vector(N-1) = 20.d0
+!call tridiagonal(N, alpha_vector, beta_vector, gamma_vector, b_vector, u_new)
+!end subroutine FirstStep
 
-subroutine dop(N, C, u_old, u_new)
+subroutine FirstStep(N, C1, u_old, u_new)
 integer :: N, i, j
-real(8) :: C
+real(8) :: C1
 real(8) :: x(0:N-1), u_old(0:N-1), u_new(0:N-1)
 do i = 1, N-2
-	u_new(i) = u_old(i) + C * (u_old(i-1) - 2*u_old(i) + u_old(i+1))
+	u_new(i) = u_old(i) + C1 * (u_old(i-1) - 2*u_old(i) + u_old(i+1))
 enddo
-end subroutine dop
+end subroutine FirstStep
 
 subroutine UpdateIC(N, u_old2, u_old1, u_new)
 !Subroutine for updating the initial condition
